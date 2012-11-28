@@ -11,10 +11,10 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        
-        <!--  Add Google Map Library -->
+
+        <!-- Add Google Map Library -->
         <uses-library android:name="com.google.android.maps" />
-        
+
         <activity
             android:name="sussex.ase.android.group5.views.MainActivity"
             android:label="@string/title_activity_main" >
@@ -24,22 +24,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <!-- SinglePlaceActivity -->
-        <activity android:name=".SinglePlaceActivity" android:label="Place Details">
-		</activity>
-        
         <!-- PlacesMapActivity -->
-        <activity android:name="sussex.ase.android.group5.views.PlacesMapActivity" android:label="Near Places Map View">
-		</activity>
+        <activity
+            android:name="sussex.ase.android.group5.views.PlacesMapActivity"
+            android:label="Near Places Map View" >
+        </activity>
+        <activity
+            android:name="sussex.ase.android.group5.views.ShopActivity"
+            android:label="Shop" >
+        </activity>
     </application>
-    
     <!-- Internet Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
- 
+
     <!-- Network State Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+
     <!-- Access Location -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
