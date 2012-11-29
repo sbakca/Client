@@ -9,18 +9,10 @@
         android:layout_height="wrap_content" >
 
         <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" 
-            android:text="@string/sign_out" />
-
-        <Button
             android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" 
-            android:text="@string/check_in" />
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/show_shop" />
     </LinearLayout>
     
     <com.google.android.maps.MapView

@@ -62,7 +62,7 @@ public final class R {
         public static final int check_in=0x7f050004;
         public static final int hello_world=0x7f050001;
         public static final int menu_settings=0x7f050002;
-        public static final int sign_out=0x7f050005;
+        public static final int show_shop=0x7f050005;
         public static final int title_activity_main=0x7f050003;
         public static final int title_activity_shop=0x7f050007;
         public static final int title_activity_shop_view=0x7f050006;

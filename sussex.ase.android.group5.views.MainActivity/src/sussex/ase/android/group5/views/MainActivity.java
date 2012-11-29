@@ -30,19 +30,11 @@ public class MainActivity extends Activity {
 	GooglePlaces googlePlaces;
 
 	// GPS Location
-	GPSTracker gps;
+	//GPSTracker gps;
 
 	// Progress dialog
 	ProgressDialog pDialog;
 
-	private LocationManager locationManager;
-
-	// KEY Strings
-	public static String KEY_REFERENCE = "reference"; // id of the place
-	public static String KEY_NAME = "name"; // name of the place
-	public static String KEY_VICINITY = "vicinity"; // Place area name
-
-	// ///////
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,7 +43,7 @@ public class MainActivity extends Activity {
 		// 0911 add --->
 		ConnectivityManager connectivity = (ConnectivityManager) MainActivity.this
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		// Checking for internet connection
+		// Checking for Internet connection
 		if (!checkInternet(connectivity)) {
 			// Internet Connection is not present
 			alert.showAlertDialog(MainActivity.this,
@@ -59,61 +51,6 @@ public class MainActivity extends Activity {
 					"Please connect to working Internet connection", false);
 			return;
 		}
-
-		// creating GPS Class object
-		gps = new GPSTracker(this);
-
-		// check if GPS location can get
-		if (gps.canGetLocation()) {
-			Log.d("Your Location", "latitude:" + gps.getLatitude()
-					+ ", longitude:" + gps.getLongitude());
-		} else {
-			// Cannot get user's current location
-			alert.showAlertDialog(MainActivity.this, "GPS Status",
-					"Couldn't get location information. Please enable GPS",
-					false);
-			return;
-		}
-		// <--- 0911 add
-
-		// <----------------------------------------haiming-----12/11/2012
-
-		// <----------------------------------------haiming-----12/11/2012
-
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		// locationManager= gps.locationManager;
-
-		LocationListener locationListener = new LocationListener() {
-			public void onLocationChanged(Location location) {
-				if (location != null) {
-					Log.i("superMap", "locationchanged");
-				}
-				// TODO Auto-generated method stub
-
-			}
-
-			// @Override
-			public void onProviderDisabled(String provider) {
-				// TODO Auto-generated method stub
-
-			}
-
-			// @Override
-			public void onProviderEnabled(String provider) {
-				// TODO Auto-generated method stub
-
-			}
-
-			// @Override
-			public void onStatusChanged(String provider, int status,
-					Bundle extras) {
-				// TODO Auto-generated method stub
-
-			}
-		};
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				1000, 5, locationListener);
-
 		canButton();
 		cnaButton();
 		logInButton();
@@ -136,10 +73,6 @@ public class MainActivity extends Activity {
 						if (login.CheckLogin(uName, pWord)) {
 							Intent intent = new Intent(getApplicationContext(),
 									PlacesMapActivity.class);
-							intent.putExtra("userlatitude",
-									Double.toString(gps.getLatitude()));
-							intent.putExtra("userlongitude",
-									Double.toString(gps.getLongitude()));
 							startActivity(intent);
 						} 
 					}

@@ -18,144 +18,122 @@ import com.google.android.maps.OverlayItem;
 import android.os.AsyncTask;
 import android.app.ProgressDialog;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import sussex.ase.android.group5.api.GooglePlaces;
 import sussex.ase.android.group5.models.Place;
 import sussex.ase.android.group5.models.PlacesList;
+import sussex.ase.android.group5.service.GPSTracker;
 import sussex.ase.android.group5.util.AddItemizedOverlay;
 import sussex.ase.android.group5.util.AlertDialogManager;
 
 
 public class PlacesMapActivity extends MapActivity {
-	// Nearest places
-	PlacesList nearPlaces;
-
-	// Map view
-	MapView mapView;
-
-	// Map overlay items
-	List<Overlay> mapOverlays;
-
-//	AddItemizedOverlay itemizedOverlay;
-
-	GeoPoint geoPoint;
-	// Map controllers
-	MapController mc;
-
-	double userLatitude;
-	double userLongitude;
-//	OverlayItem overlayitem;
-	ProgressDialog pDialog;
-	
+	private PlacesList nearPlaces;
+	private MapView mapView;
+	private List<Overlay> mapOverlays;
+	private ProgressDialog pDialog;
+	private AlertDialogManager alert = new AlertDialogManager();
+	private double userLatitude=0;
+	private double userLongitude=0;
     private int intZoomLevel=13;
-
-	
-	// Alert Dialog Manager
-	AlertDialogManager alert = new AlertDialogManager();
-
-
+    private GPSTracker gps = null;
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mylayout);
-
-		// Getting intent data
-		Intent intent = getIntent();
-		
-		// Users current geo location
-//		String strlatitude = intent.getStringExtra("user_latitude");
-//		String strlongitude = intent.getStringExtra("user_longitude");
-		userLatitude = Double.parseDouble(intent.getStringExtra("userlatitude"));
-		userLongitude = Double.parseDouble(intent.getStringExtra("userlongitude"));
-		
-        new LoadPlaces().execute();
-
-        signout();
-		getAddress();
-
+        
+		mapView =(MapView) findViewById(R.id.mapview);
+        mapView.setClickable(true);	
+		mapView.setBuiltInZoomControls(true);	
+		mapView.setSatellite(false);
+		if(CheckGPSTrackerService()==false)
+		{
+			Intent intent = new Intent(getApplicationContext(),
+					MainActivity.class);
+			startActivity(intent);
+			return;
+		}
+		AddLocationTag();
+		SetShowShopsButton();
 	}
+	private boolean CheckGPSTrackerService()
+	{
+		// creating GPS Class object
+		 gps = new GPSTracker(this);
 
-
-
-	public void getAddress()
+		// check if GPS location can get
+		if (gps.canGetLocation()) {
+			Log.d("Your Location", "latitude:" + gps.getLatitude()
+					+ ", longitude:" + gps.getLongitude());
+			return true;
+		} else {
+			// Cannot get user's current location
+			alert.showAlertDialog(PlacesMapActivity.this, "GPS Status",
+					"Couldn't get location information. Please enable GPS",
+					false);
+			return false;
+		}
+	}
+	private void UpdateLocation()
+	{
+		gps.getLocation();
+		userLatitude = gps.getLatitude();
+		userLongitude = gps.getLongitude();
+	}
+	private void AddLocationTag()
 	{
 		
-		// get address button
+		Calendar c=Calendar.getInstance();
+		int mYear=c.get(Calendar.YEAR);
+		int mMonth=c.get(Calendar.MONTH);
+		int mDay=c.get(Calendar.DAY_OF_MONTH);
+		int mHour=c.get(Calendar.HOUR_OF_DAY);
+		int mMinute=c.get(Calendar.MINUTE);
+		UpdateLocation();
+		GeoPoint gp = new GeoPoint((int)(userLatitude * 1E6), (int) (userLongitude*1E6));
+        MapController mapctrl = mapView.getController();
+	    mapctrl.setCenter(gp);
+	    refreshMapViewByGeoPoint(gp,mapView, intZoomLevel,false); 
+        mapOverlays = mapView.getOverlays();
+   		Address mAddr = getAddressByGeoPoint(PlacesMapActivity.this, gp);
+   		String address = "cannot find the address of this location";
+   		if(mAddr != null)
+   		{
+   			address = mAddr.getCountryName() + ","+mAddr.getLocality();
+   		}
+   		
+		String text =	"latitude:" + userLatitude + "\n" +
+						"longitude:" + userLongitude + "\n" +
+						"Address:" + address + "\n" +
+						"time:" + mYear + "/" + mMonth + "/" + mDay + "/" + mHour + "/" + mMinute;
+		
+		AddItemizedOverlay itemizedoverlayR = 
+        		new AddItemizedOverlay(getResources().getDrawable(R.drawable.mark_red), PlacesMapActivity.this);
+        OverlayItem overlayitem = new OverlayItem(gp, "My location", text); // put information of the location
+        itemizedoverlayR.addOverlay(overlayitem);
+        mapOverlays.add(itemizedoverlayR);
+        itemizedoverlayR.populateNow();
+		
+	}
+
+	private void SetShowShopsButton()
+	{
+		
 		Button getAddress = (Button) findViewById(R.id.button1);
 		getAddress.setOnClickListener(new Button.OnClickListener()
 		{
 			public void onClick(View v)
 			{
-				Calendar c=Calendar.getInstance();
-				int mYear=c.get(Calendar.YEAR);
-				int mMonth=c.get(Calendar.MONTH);
-				int mDay=c.get(Calendar.DAY_OF_MONTH);
-				int mHour=c.get(Calendar.HOUR_OF_DAY);
-				int mMinute=c.get(Calendar.MINUTE);
-
-				mapView =(MapView) findViewById(R.id.mapview);
-				mapView.setClickable(true);	// clickable the map
-				mapView.setBuiltInZoomControls(true);	// zoomcontroll
-				//mapView.setStreetView(true);
-
-				
-				
-
-				//<-------------------------------------------12112012 change
-//				Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-				GeoPoint gp = new GeoPoint((int)(userLatitude * 1E6), (int) (userLongitude*1E6));
-/*        		if(location != null)
-        		{
-        			gp=getGeoByLocation(location);
-        			latitude=location.getLatitude();
-        			longitude=location.getLongitude();
-        		}
-*/
-                //GeoPoint gp = new GeoPoint((int)(latitude * 1E6), (int) (longtitude*1E6));
-                MapController mapctrl = mapView.getController();
-			    mapctrl.setCenter(gp);
-			    refreshMapViewByGeoPoint(gp,mapView, intZoomLevel,false); // ?????
-
-		        mapOverlays = mapView.getOverlays();
-		        //<-------------------------------------------11/11/2012
-				
-	
-	       		Address mAddr = getAddressByGeoPoint(PlacesMapActivity.this, gp);
-	       		String address = "cannot find the address of this location";
-	       		if(mAddr != null)
-	       		{
-	       			address = mAddr.getCountryName() + ","+mAddr.getLocality();
-	       		}
-		        // set the information on overlay
-				String text =	"latitude:" + userLatitude + "\n" +
-								"longitude:" + userLongitude + "\n" +
-								"Address:" + address + "\n" +
-								"time:" + mYear + "/" + mMonth + "/" + mDay + "/" + mHour + "/" + mMinute;
-		        // set the pin on my location
-//		        ClientItemizedOverlay itemizedoverlayR = 
-//		        		new ClientItemizedOverlay(getResources().getDrawable(R.drawable.mark_red), PlacesMapActivity.this);
-				AddItemizedOverlay itemizedoverlayR = 
-		        		new AddItemizedOverlay(getResources().getDrawable(R.drawable.mark_red), PlacesMapActivity.this);
-
-
-		        // set the text to the dialog
-		        OverlayItem overlayitem = new OverlayItem(gp, "My location", text); // put information of the location
-		        itemizedoverlayR.addOverlay(overlayitem);
-		        mapOverlays.add(itemizedoverlayR);	// show my pin on the map
-		        itemizedoverlayR.populateNow();
-
-
-
+				new LoadPlaces().execute();
 				if(nearPlaces != null)
 				{
 					// Get json response status
 					String status = nearPlaces.status;
-					
 					// Check for all possible status
 					if(status.equals("OK")){
-						
-	
 						// These values are used to get map boundary area
 						// The area where you can see all the markers on screen
 						int minLat = Integer.MAX_VALUE;
@@ -163,9 +141,6 @@ public class PlacesMapActivity extends MapActivity {
 						int maxLat = Integer.MIN_VALUE;
 						int maxLong = Integer.MIN_VALUE;
 
-//						 Iterator<Place> itrPlaces = nearPlaces.results.iterator();
-//				        ClientItemizedOverlay itemizedoverlayB = 
-//				        		new ClientItemizedOverlay(getResources().getDrawable(R.drawable.mark_blue), PlacesMapActivity.this);
 						AddItemizedOverlay itemizedoverlayB = 
 				        		new AddItemizedOverlay(getResources().getDrawable(R.drawable.mark_blue), PlacesMapActivity.this);
 						// loop through all the places
@@ -175,14 +150,11 @@ public class PlacesMapActivity extends MapActivity {
 							double longitude = place.geometry.location.lng; // longitude
 							
 							// Geopoint to place on map
-							geoPoint = new GeoPoint((int) (latitude * 1E6), (int) (longitude * 1E6));
+							GeoPoint geoPoint = new GeoPoint((int) (latitude * 1E6), (int) (longitude * 1E6));
 							
 							// Map overlay item
-							overlayitem = new OverlayItem(geoPoint, place.name, place.vicinity);
-
+						    OverlayItem	overlayitem = new OverlayItem(geoPoint, place.name, place.vicinity);
 							itemizedoverlayB.addOverlay(overlayitem);
-							
-							
 							// calculating map boundary area
 							minLat  = (int) Math.min( geoPoint.getLatitudeE6(), minLat );
 						    minLong = (int) Math.min( geoPoint.getLongitudeE6(), minLong);
@@ -190,13 +162,10 @@ public class PlacesMapActivity extends MapActivity {
 						    maxLong = (int) Math.max( geoPoint.getLongitudeE6(), maxLong );
 						}
 						mapOverlays.add(itemizedoverlayB);
-						
 						// showing all overlay items
 						itemizedoverlayB.populateNow();
 						// Adjusting the zoom level so that you can see all the markers on map
 						mapView.getController().zoomToSpan(Math.abs( minLat - maxLat ), Math.abs( minLong - maxLong ));
-
-
 						
 					}
 					else if(status.equals("ZERO_RESULTS")){
@@ -235,32 +204,11 @@ public class PlacesMapActivity extends MapActivity {
 								"Sorry error occured.",
 								false);
 					}
-
-
-
 				}
-
-
-
 			}
 		});
 	}
 
-	public void signout()
-	{
-	
-		//TextView mAddress= (TextView) findViewById(R.id.address);
-		Button outButton = (Button) findViewById(R.id.button2);
-		    outButton.setOnClickListener(new Button.OnClickListener()
-		    {
-		    	public void onClick(View v)
-		    	{
-		    		Intent intent= new Intent();
-	            	intent.setClass(PlacesMapActivity.this, MainActivity.class);
-	            	startService(intent);
-		    	}
-		    });
-	}
 
     public void refreshMapViewByGeoPoint(GeoPoint gp,MapView mv, int zoomLevel,boolean bIfSatellite )
     {
@@ -273,7 +221,6 @@ public class PlacesMapActivity extends MapActivity {
     		if(bIfSatellite)
     		{
     			mv.setSatellite(true);
-    			mv.setStreetView(true);
     		}
     		else
     		{
@@ -286,7 +233,8 @@ public class PlacesMapActivity extends MapActivity {
     		e.printStackTrace();
     	}
     }
-    public Address getAddressByGeoPoint(Context context,GeoPoint gp)
+  
+  public Address getAddressByGeoPoint(Context context,GeoPoint gp)
     {
     	Address address=null;
     	
@@ -335,6 +283,7 @@ public class PlacesMapActivity extends MapActivity {
 		GooglePlaces googlePlaces = new GooglePlaces();
 		
 		try {
+			
 			// Separeate your place types by PIPE symbol "|"
 			// If you want all types places make it as null
 			// Check list of types supported by google
@@ -343,7 +292,7 @@ public class PlacesMapActivity extends MapActivity {
 			
 			// Radius in meters - increase this value if you don't find any places
 			double radius = 10000; // 1000 meters 
-			
+			UpdateLocation();
 			// get nearest places
 			nearPlaces = googlePlaces.search(userLatitude, userLongitude, radius, types);
 			
