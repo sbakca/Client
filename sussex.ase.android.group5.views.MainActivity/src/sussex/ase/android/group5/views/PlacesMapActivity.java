@@ -1,25 +1,14 @@
 package sussex.ase.android.group5.views;
 
-import java.lang.reflect.Array;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
-
 import com.androidhive.googleplacesandmaps.R;
-import com.androidhive.googleplacesandmaps.R.drawable;
-import com.androidhive.googleplacesandmaps.R.id;
-import com.androidhive.googleplacesandmaps.R.layout;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -29,20 +18,13 @@ import com.google.android.maps.OverlayItem;
 import android.os.AsyncTask;
 import android.app.ProgressDialog;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import java.util.ArrayList;
-
 import sussex.ase.android.group5.api.GooglePlaces;
 import sussex.ase.android.group5.models.Place;
 import sussex.ase.android.group5.models.PlacesList;
 import sussex.ase.android.group5.util.AddItemizedOverlay;
 import sussex.ase.android.group5.util.AlertDialogManager;
-
-
-
-
 
 
 public class PlacesMapActivity extends MapActivity {
@@ -133,7 +115,7 @@ public class PlacesMapActivity extends MapActivity {
                 //GeoPoint gp = new GeoPoint((int)(latitude * 1E6), (int) (longtitude*1E6));
                 MapController mapctrl = mapView.getController();
 			    mapctrl.setCenter(gp);
-			    refreshMapViewByGeoPoint(gp,mapView, intZoomLevel,true); // ?????
+			    refreshMapViewByGeoPoint(gp,mapView, intZoomLevel,false); // ?????
 
 		        mapOverlays = mapView.getOverlays();
 		        //<-------------------------------------------11/11/2012
