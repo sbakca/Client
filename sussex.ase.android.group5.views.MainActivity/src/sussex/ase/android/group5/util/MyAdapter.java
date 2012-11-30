@@ -88,6 +88,7 @@ public class MyAdapter extends BaseAdapter{
             
             	TextView t=cashe1.get(tempPosition);
             	int a=Integer.parseInt(t.getText().toString());
+            	mData.get(tempPosition).put("tlike", a+1);
             	t.setText(String.valueOf(a+1));
             	
             }
@@ -98,6 +99,7 @@ public class MyAdapter extends BaseAdapter{
             public void onClick(View v) {
             	TextView t=cashe2.get(tempPosition);
             	int a=Integer.parseInt(t.getText().toString());
+            	mData.get(tempPosition).put("tdislike", a+1);
             	t.setText(String.valueOf(a+1));
             	
             

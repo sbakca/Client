@@ -69,6 +69,7 @@ public class ShopActivity extends Activity {
 			map.put("comment", "comment"+i);
 			map.put("tlike", i);
 			map.put("tdislike", 10);
+			map.put("tdislike",i);
 			contents.add(map);
 		}
 		MyAdapter adapter=new MyAdapter(this,contents);
