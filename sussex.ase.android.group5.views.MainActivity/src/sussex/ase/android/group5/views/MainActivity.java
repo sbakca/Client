@@ -14,7 +14,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -23,6 +25,7 @@ import android.widget.EditText;
 
 public class MainActivity extends Activity {
 
+	private boolean flag = false;
 	// Alert Dialog Manager
 	AlertDialogManager alert = new AlertDialogManager();
 
@@ -35,6 +38,7 @@ public class MainActivity extends Activity {
 	// Progress dialog
 	ProgressDialog pDialog;
 
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -64,20 +68,10 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				EditText userName = (EditText) findViewById(R.id.editText1);
 				EditText passWord = (EditText) findViewById(R.id.editText2);
-				final String uName = userName.getText().toString();
-				final String pWord = passWord.getText().toString();
+			 String uName = userName.getText().toString();
+			 String pWord = passWord.getText().toString();
 
-				Thread thread = new Thread(new Runnable() {
-					public void run() {
-						Login login = new Login();
-						if (login.CheckLogin(uName, pWord)) {
-							Intent intent = new Intent(getApplicationContext(),
-									PlacesMapActivity.class);
-							startActivity(intent);
-						} 
-					}
-				});
-				thread.start();
+				new LoginTask().execute(new String []{uName,pWord});
 
 			}
 		});
@@ -132,6 +126,48 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
+	
+	
+	class LoginTask extends AsyncTask<String, String, String> {
+
+		@Override
+	protected void onPreExecute() {
+		super.onPreExecute();
+		flag=false;
+		pDialog = new ProgressDialog(MainActivity.this);
+		pDialog.setMessage(Html.fromHtml("<b>Hi Guy!</b><br/>Logining..."));
+		pDialog.setIndeterminate(false);
+		pDialog.setCancelable(false);
+		pDialog.show();
+	}
+
+	protected String doInBackground(String... args) {
+		try {
+			
+			Login login = new Login();
+			flag=login.CheckLogin(args[0], args[1]);
+			if (flag) {
+				Intent intent = new Intent(getApplicationContext(),
+						PlacesMapActivity.class);
+				startActivity(intent);
+			} 
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	protected void onPostExecute(String file_url) {
+		pDialog.dismiss();
+		if(flag==false)
+		{
+			alert.showAlertDialog(MainActivity.this, "Sorry",
+					"Your username and your password do not match, please try again",
+					false);
+		}
+	}
+
+}
 
 }
 

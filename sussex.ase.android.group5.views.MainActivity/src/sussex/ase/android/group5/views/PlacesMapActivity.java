@@ -119,6 +119,86 @@ public class PlacesMapActivity extends MapActivity {
 		
 	}
 
+	private void AddShopsMark()
+	{
+		if(nearPlaces != null)
+		{
+			// Get json response status
+			String status = nearPlaces.status;
+			// Check for all possible status
+			if(status.equals("OK")){
+				// These values are used to get map boundary area
+				// The area where you can see all the markers on screen
+				int minLat = Integer.MAX_VALUE;
+				int minLong = Integer.MAX_VALUE;
+				int maxLat = Integer.MIN_VALUE;
+				int maxLong = Integer.MIN_VALUE;
+
+				AddItemizedOverlay itemizedoverlayB = 
+		        		new AddItemizedOverlay(getResources().getDrawable(R.drawable.mark_blue), PlacesMapActivity.this);
+				// loop through all the places
+				for (Place place : nearPlaces.results)
+				{
+					double latitude = place.geometry.location.lat; // latitude
+					double longitude = place.geometry.location.lng; // longitude
+					
+					// Geopoint to place on map
+					GeoPoint geoPoint = new GeoPoint((int) (latitude * 1E6), (int) (longitude * 1E6));
+					
+					// Map overlay item
+				    OverlayItem	overlayitem = new OverlayItem(geoPoint, place.name, place.vicinity);
+					itemizedoverlayB.addOverlay(overlayitem);
+					// calculating map boundary area
+					minLat  = (int) Math.min( geoPoint.getLatitudeE6(), minLat );
+				    minLong = (int) Math.min( geoPoint.getLongitudeE6(), minLong);
+				    maxLat  = (int) Math.max( geoPoint.getLatitudeE6(), maxLat );
+				    maxLong = (int) Math.max( geoPoint.getLongitudeE6(), maxLong );
+				}
+				mapOverlays.add(itemizedoverlayB);
+				// showing all overlay items
+				itemizedoverlayB.populateNow();
+				// Adjusting the zoom level so that you can see all the markers on map
+				mapView.getController().zoomToSpan(Math.abs( minLat - maxLat ), Math.abs( minLong - maxLong ));
+				
+			}
+			else if(status.equals("ZERO_RESULTS")){
+				// Zero results found
+				alert.showAlertDialog(PlacesMapActivity.this, "Near Places",
+						"Sorry no places found. Try to change the types of places",
+						false);
+			}
+			else if(status.equals("UNKNOWN_ERROR"))
+			{
+				alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
+						"Sorry unknown error occured.",
+						false);
+			}
+			else if(status.equals("OVER_QUERY_LIMIT"))
+			{
+				alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
+						"Sorry query limit to google places is reached",
+						false);
+			}
+			else if(status.equals("REQUEST_DENIED"))
+			{
+				alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
+						"Sorry error occured. Request is denied",
+						false);
+			}
+			else if(status.equals("INVALID_REQUEST"))
+			{
+				alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
+						"Sorry error occured. Invalid Request",
+						false);
+			}
+			else
+			{
+				alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
+						"Sorry error occured.",
+						false);
+			}
+		}
+	}
 	private void SetShowShopsButton()
 	{
 		
@@ -128,83 +208,6 @@ public class PlacesMapActivity extends MapActivity {
 			public void onClick(View v)
 			{
 				new LoadPlaces().execute();
-				if(nearPlaces != null)
-				{
-					// Get json response status
-					String status = nearPlaces.status;
-					// Check for all possible status
-					if(status.equals("OK")){
-						// These values are used to get map boundary area
-						// The area where you can see all the markers on screen
-						int minLat = Integer.MAX_VALUE;
-						int minLong = Integer.MAX_VALUE;
-						int maxLat = Integer.MIN_VALUE;
-						int maxLong = Integer.MIN_VALUE;
-
-						AddItemizedOverlay itemizedoverlayB = 
-				        		new AddItemizedOverlay(getResources().getDrawable(R.drawable.mark_blue), PlacesMapActivity.this);
-						// loop through all the places
-						for (Place place : nearPlaces.results)
-						{
-							double latitude = place.geometry.location.lat; // latitude
-							double longitude = place.geometry.location.lng; // longitude
-							
-							// Geopoint to place on map
-							GeoPoint geoPoint = new GeoPoint((int) (latitude * 1E6), (int) (longitude * 1E6));
-							
-							// Map overlay item
-						    OverlayItem	overlayitem = new OverlayItem(geoPoint, place.name, place.vicinity);
-							itemizedoverlayB.addOverlay(overlayitem);
-							// calculating map boundary area
-							minLat  = (int) Math.min( geoPoint.getLatitudeE6(), minLat );
-						    minLong = (int) Math.min( geoPoint.getLongitudeE6(), minLong);
-						    maxLat  = (int) Math.max( geoPoint.getLatitudeE6(), maxLat );
-						    maxLong = (int) Math.max( geoPoint.getLongitudeE6(), maxLong );
-						}
-						mapOverlays.add(itemizedoverlayB);
-						// showing all overlay items
-						itemizedoverlayB.populateNow();
-						// Adjusting the zoom level so that you can see all the markers on map
-						mapView.getController().zoomToSpan(Math.abs( minLat - maxLat ), Math.abs( minLong - maxLong ));
-						
-					}
-					else if(status.equals("ZERO_RESULTS")){
-						// Zero results found
-						alert.showAlertDialog(PlacesMapActivity.this, "Near Places",
-								"Sorry no places found. Try to change the types of places",
-								false);
-					}
-					else if(status.equals("UNKNOWN_ERROR"))
-					{
-						alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
-								"Sorry unknown error occured.",
-								false);
-					}
-					else if(status.equals("OVER_QUERY_LIMIT"))
-					{
-						alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
-								"Sorry query limit to google places is reached",
-								false);
-					}
-					else if(status.equals("REQUEST_DENIED"))
-					{
-						alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
-								"Sorry error occured. Request is denied",
-								false);
-					}
-					else if(status.equals("INVALID_REQUEST"))
-					{
-						alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
-								"Sorry error occured. Invalid Request",
-								false);
-					}
-					else
-					{
-						alert.showAlertDialog(PlacesMapActivity.this, "Places Error",
-								"Sorry error occured.",
-								false);
-					}
-				}
 			}
 		});
 	}
@@ -295,7 +298,7 @@ public class PlacesMapActivity extends MapActivity {
 			UpdateLocation();
 			// get nearest places
 			nearPlaces = googlePlaces.search(userLatitude, userLongitude, radius, types);
-			
+			AddShopsMark();
 
 		} catch (Exception e) {
 			e.printStackTrace();
