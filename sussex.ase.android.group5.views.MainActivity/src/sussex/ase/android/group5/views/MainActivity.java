@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
 		});
 	}
 
-	public void canButton() {
+	public void canButton(){
 		// cancel button
 		Button canButton = (Button) findViewById(R.id.button2);
 		canButton.setOnClickListener(new Button.OnClickListener() {
@@ -145,8 +145,8 @@ public class MainActivity extends Activity {
 		try {
 			
 			Login login = new Login();
-			flag=login.CheckLogin(args[0], args[1]);
-			if (flag) {
+			//flag=login.CheckLogin(args[0], args[1]);
+			if (true) {
 				Intent intent = new Intent(getApplicationContext(),
 						PlacesMapActivity.class);
 				startActivity(intent);

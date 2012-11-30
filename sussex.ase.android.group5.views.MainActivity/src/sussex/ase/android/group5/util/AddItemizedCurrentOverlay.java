@@ -2,12 +2,9 @@ package sussex.ase.android.group5.util;
 
 import java.util.ArrayList;
 
-import sussex.ase.android.group5.views.ShopActivity;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 
@@ -19,17 +16,17 @@ import com.google.android.maps.OverlayItem;
 /**
  * Class used to place marker or any overlay items on Map
  * */
-public class AddItemizedOverlay extends ItemizedOverlay<OverlayItem> {
+public class AddItemizedCurrentOverlay extends ItemizedOverlay<OverlayItem> {
  
        private ArrayList<OverlayItem> mapOverlays = new ArrayList<OverlayItem>();
  
        private Context context;
  
-       public AddItemizedOverlay(Drawable defaultMarker) {
+       public AddItemizedCurrentOverlay(Drawable defaultMarker) {
             super(boundCenterBottom(defaultMarker));
        }
  
-       public AddItemizedOverlay(Drawable defaultMarker, Context context) {
+       public AddItemizedCurrentOverlay(Drawable defaultMarker, Context context) {
             this(defaultMarker);
             this.context = context;
        }
@@ -64,7 +61,6 @@ public class AddItemizedOverlay extends ItemizedOverlay<OverlayItem> {
        @Override
        protected boolean onTap(int index) {
          OverlayItem item = mapOverlays.get(index);
-         /*
          AlertDialog.Builder dialog = new AlertDialog.Builder(this.context);
          dialog.setTitle(item.getTitle());
          dialog.setMessage(item.getSnippet());
@@ -72,17 +68,7 @@ public class AddItemizedOverlay extends ItemizedOverlay<OverlayItem> {
  			public void onClick(DialogInterface dialog, int which) {
  			}
  		});
-         dialog.show();*/
-         Intent intent=new Intent();
-         intent.setClass(context, ShopActivity.class);
-         intent.putExtra("title",item.getTitle());
-         intent.putExtra("message", item.getSnippet());
-         intent.putExtra("lati",item.getPoint().getLatitudeE6()/1E6);
-         intent.putExtra("longti", item.getPoint().getLongitudeE6()/1E6);
-         context.startActivity(intent);
-         
-         
-         
+         dialog.show();
          return true;
        }
  

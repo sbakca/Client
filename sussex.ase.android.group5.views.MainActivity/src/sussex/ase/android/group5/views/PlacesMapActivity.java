@@ -25,6 +25,7 @@ import sussex.ase.android.group5.api.GooglePlaces;
 import sussex.ase.android.group5.models.Place;
 import sussex.ase.android.group5.models.PlacesList;
 import sussex.ase.android.group5.service.GPSTracker;
+import sussex.ase.android.group5.util.AddItemizedCurrentOverlay;
 import sussex.ase.android.group5.util.AddItemizedOverlay;
 import sussex.ase.android.group5.util.AlertDialogManager;
 
@@ -110,8 +111,8 @@ public class PlacesMapActivity extends MapActivity {
 						"Address:" + address + "\n" +
 						"time:" + mYear + "/" + mMonth + "/" + mDay + "/" + mHour + "/" + mMinute;
 		
-		AddItemizedOverlay itemizedoverlayR = 
-        		new AddItemizedOverlay(getResources().getDrawable(R.drawable.mark_red), PlacesMapActivity.this);
+		AddItemizedCurrentOverlay itemizedoverlayR = 
+        		new AddItemizedCurrentOverlay(getResources().getDrawable(R.drawable.mark_red), PlacesMapActivity.this);
         OverlayItem overlayitem = new OverlayItem(gp, "My location", text); // put information of the location
         itemizedoverlayR.addOverlay(overlayitem);
         mapOverlays.add(itemizedoverlayR);
