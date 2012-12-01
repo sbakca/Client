@@ -1,114 +1,142 @@
 package sussex.ase.android.group5.util;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import sussex.ase.android.group5.api.CommentAPI;
+import sussex.ase.android.group5.models.Comment;
 import com.androidhive.googleplacesandmaps.R;
-
-
-
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-public class MyAdapter extends BaseAdapter{
-	 
-    private LayoutInflater mInflater;
-    private List<Map<String, Object>> mData; 
-  
-    
-    private ArrayList<TextView> cashe1 =new ArrayList<TextView>();
-    private ArrayList<TextView> cashe2 =new ArrayList<TextView>();
- 
-    private ViewHolder holder;
-    public MyAdapter(Context context,List<Map<String, Object>> list){
-        this.mInflater = LayoutInflater.from(context);
-        mData=list;
-        
-        
-    }
-    public int getCount() {
-        // TODO Auto-generated method stub
-        return mData.size();
-    }
+public class MyAdapter extends BaseAdapter {
 
-    public Object getItem(int arg0) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	CommentAPI commentApi = new CommentAPI();
+	ArrayList<Comment> list = null;
+	Context context;
+	LayoutInflater inflater;
+	ViewHolder hodle;
 
-    public long getItemId(int arg0) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+	public MyAdapter(Context context) {
+		// TODO Auto-generated constructor stub
+		this.context = context;
+		inflater = LayoutInflater.from(context);
+	}
 
-    public View getView(int position,View convertView, ViewGroup parent) {
-         final int tempPosition=position;
-    	
-       
-        if (convertView == null) {
-             
-            holder=new ViewHolder();  
-             
-            convertView = mInflater.inflate(R.layout.list_item, null);
-            holder.username = (TextView)convertView.findViewById(R.id.username);
-            holder.comment = (TextView)convertView.findViewById(R.id.comment);
-            holder.tlike = (TextView)convertView.findViewById(R.id.tlike);
-            cashe1.add(holder.tlike);
-            holder.tdislike = (TextView)convertView.findViewById(R.id.tdislike);
-            cashe2.add(holder.tdislike);
-            holder.bLike = (Button)convertView.findViewById(R.id.blike);
-            holder.bDis = (Button)convertView.findViewById(R.id.bdislike);
-            convertView.setTag(holder);
-             
-        }else {
-             
-            holder = (ViewHolder)convertView.getTag();
-        }
-         
-         
-        
-        holder.username.setText((String)mData.get(position).get("username"));
-        holder.comment.setText((String)mData.get(position).get("comment"));
-        
-        holder.tlike.setText(String.valueOf((Integer)mData.get(position).get("tlike")));
-        
-        holder.tdislike.setText(String.valueOf((Integer)mData.get(position).get("tdislike")));
-        
-        
-        holder.bLike.setOnClickListener(new View.OnClickListener() {
-        	
-            
-            public void onClick(View v) {
-            
-            	TextView t=cashe1.get(tempPosition);
-            	int a=Integer.parseInt(t.getText().toString());
-            	mData.get(tempPosition).put("tlike", a+1);
-            	t.setText(String.valueOf(a+1));
-            	
-            }
-        });
-        holder.bDis.setOnClickListener(new View.OnClickListener() {
-             
-            
-            public void onClick(View v) {
-            	TextView t=cashe2.get(tempPosition);
-            	int a=Integer.parseInt(t.getText().toString());
-            	mData.get(tempPosition).put("tdislike", a+1);
-            	t.setText(String.valueOf(a+1));
-            	
-            
-            	
-            }
-        });
-         
-         
-        return convertView;
-    }
-     
+	public void setList(ArrayList<Comment> list) {
+		this.list = list;
+		// textViewsCanche = new ArrayList<TextView>();
+	}
+
+	public int getCount() {
+		// TODO Auto-generated method stub
+		return list.size();
+	}
+
+	public Object getItem(int arg0) {
+		// TODO Auto-generated method stub
+		return list.get(arg0);
+	}
+
+	public long getItemId(int arg0) {
+		// TODO Auto-generated method stub
+		return arg0;
+	}
+
+	public View getView(int position, View convertView, ViewGroup arg2) {
+		if (convertView == null) {
+			convertView = inflater.inflate(R.layout.comment_item, null);
+			hodle = new ViewHolder();
+			hodle.username = (TextView) convertView
+					.findViewById(R.id.username_txt);
+			hodle.comment = (TextView) convertView
+					.findViewById(R.id.comment_txt);
+			hodle.tlike = (TextView) convertView.findViewById(R.id.like_txt);
+			hodle.tdislike = (TextView) convertView
+					.findViewById(R.id.dislike_txt);
+			hodle.bLike = (ImageButton) convertView.findViewById(R.id.like_btn);
+			hodle.bDis = (ImageButton) convertView
+					.findViewById(R.id.dislike_btn);
+			hodle.profile = (ImageView) convertView
+					.findViewById(R.id.userimageView);
+			convertView.setTag(hodle);
+		} else {
+			hodle = (ViewHolder) convertView.getTag();
+		}
+		SetHolde(position);
+		return convertView;
+	}
+
+	private void SetHolde(int position) {
+		final int positionTemp = position;
+		hodle.username.setText(list.get(position).getUsername());
+		hodle.comment.setText(list.get(position).getContent());
+		hodle.tlike.setText(list.get(position).getLikeNumber());
+		hodle.tdislike.setText(list.get(position).getDislikeNumber());
+		hodle.profile.setImageResource(R.drawable.pic);
+		hodle.bDis.setEnabled(!list.get(position).IsDisliked());
+		hodle.bLike.setEnabled(!list.get(position).IsLiked());
+		hodle.bLike.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				UpdateLikeNumber(positionTemp);
+			}
+		});
+		hodle.bDis.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				UpdateDisLikeNumber(positionTemp);
+			}
+		});
+	}
+
+	private void UpdateLikeNumber(int i) {
+		if(list.get(i).IsLiked())
+		{
+			return;
+		}
+		list.get(i).Like();
+		new LikeOrDislikeTask().execute((new String[] { "1",
+				String.valueOf(list.get(i).getId()) }));
+		this.notifyDataSetChanged();
+	}
+
+	private void UpdateDisLikeNumber(int i) {
+		list.get(i).Dislike();
+		new LikeOrDislikeTask().execute((new String[] { "0",
+				String.valueOf(list.get(i).getId()) }));
+		this.notifyDataSetChanged();
+	}
+
+	class LikeOrDislikeTask extends AsyncTask<String, String, String> {
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		}
+
+		protected String doInBackground(String... args) {
+			try {
+				if (args[0].equals("0")) {
+					commentApi.DislikeCommentById(Integer.valueOf(args[1]));
+				}
+				else
+				{
+					commentApi.LikeCommentById(Integer.valueOf(args[1]));
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		protected void onPostExecute(String file_url) {
+		}
+
+	}
 }

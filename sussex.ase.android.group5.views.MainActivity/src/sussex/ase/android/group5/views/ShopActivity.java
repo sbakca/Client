@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import sussex.ase.android.group5.api.CommentAPI;
 import sussex.ase.android.group5.util.MyAdapter;
 import sussex.ase.android.group5.views.MainActivity.LoginTask;
 
@@ -35,45 +36,47 @@ public class ShopActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
         
-        Intent intent=getIntent();
-        title=intent.getStringExtra("title");
-        message=intent.getStringExtra("message");
-        latitude=intent.getDoubleExtra("lati", 0);
-        longtitude=intent.getDoubleExtra("longti", 0);
-        TextView tTitle=(TextView) findViewById(R.id.title);
-        TextView tMessage=(TextView) findViewById(R.id.message);
-        TextView geo=(TextView) findViewById(R.id.geo);
-        tTitle.setText(title);
-        tMessage.setText(message);
-        geo.setText("laititude :"+latitude+" longtitude :"+longtitude);
-        
-        Button sendComment= (Button) findViewById(R.id.button1);
-        sendComment.setOnClickListener(new Button.OnClickListener() {
-			public void onClick(View v) {
-				EditText editComment= (EditText) findViewById(R.id.comment);
-		        comment=editComment.getText().toString();
-		        if(comment!="")
-		        {
-		        }
+//        Intent intent=getIntent();
+//        title=intent.getStringExtra("title");
+//        message=intent.getStringExtra("message");
+//        latitude=intent.getDoubleExtra("lati", 0);
+//        longtitude=intent.getDoubleExtra("longti", 0);
+//        TextView tTitle=(TextView) findViewById(R.id.title);
+//        TextView tMessage=(TextView) findViewById(R.id.message);
+//        TextView geo=(TextView) findViewById(R.id.geo);
+//        tTitle.setText(title);
+//        tMessage.setText(message);
+//        geo.setText("laititude :"+latitude+" longtitude :"+longtitude);
+//        
+//        Button sendComment= (Button) findViewById(R.id.button1);
+//        sendComment.setOnClickListener(new Button.OnClickListener() {
+//			public void onClick(View v) {
+//				EditText editComment= (EditText) findViewById(R.id.comment);
+//		        comment=editComment.getText().toString();
+//		        if(comment!="")
+//		        {
+//		        }
+//
+//			}
+//		});
+//	
+//        
+//        
+//        
+//        
+//        for (int i = 0; i < 5; i++) {
+//			Map<String, Object> map = new HashMap<String, Object>();
+//			map.put("username", "username"+i);
+//			map.put("comment", "comment"+i);
+//			map.put("tlike", i);
+//			map.put("tdislike", 10);
+//			map.put("tdislike",i);
+//			contents.add(map);
+//		}
 
-			}
-		});
-	
-        
-        
-        
-        
-        for (int i = 0; i < 5; i++) {
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("username", "username"+i);
-			map.put("comment", "comment"+i);
-			map.put("tlike", i);
-			map.put("tdislike", 10);
-			map.put("tdislike",i);
-			contents.add(map);
-		}
-		MyAdapter adapter=new MyAdapter(this,contents);
-
+        CommentAPI commentApi = new CommentAPI();
+		MyAdapter adapter=new MyAdapter(this);
+		adapter.setList(commentApi.GetCommentsByShopkey("")); 
 		ListView list = (ListView)findViewById(R.id.list);
 		list.setAdapter(adapter);
         

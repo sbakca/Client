@@ -16,47 +16,59 @@ public final class R {
         public static final int padding_small=0x7f040000;
     }
     public static final class drawable {
-        public static final int fail=0x7f020000;
-        public static final int ic_action_search=0x7f020001;
-        public static final int ic_launcher=0x7f020002;
-        public static final int mark_blue=0x7f020003;
-        public static final int mark_red=0x7f020004;
-        public static final int pic=0x7f020005;
-        public static final int success=0x7f020006;
+        public static final int dislike_button=0x7f020000;
+        public static final int fail=0x7f020001;
+        public static final int ic_action_search=0x7f020002;
+        public static final int ic_launcher=0x7f020003;
+        public static final int like_button=0x7f020004;
+        public static final int mark_blue=0x7f020005;
+        public static final int mark_red=0x7f020006;
+        public static final int pic=0x7f020007;
+        public static final int success=0x7f020008;
+        public static final int user=0x7f020009;
     }
     public static final class id {
-        public static final int bdislike=0x7f080014;
-        public static final int blike=0x7f080015;
+        public static final int bdislike=0x7f08001c;
+        public static final int blike=0x7f08001d;
         public static final int button1=0x7f080006;
         public static final int button2=0x7f080008;
         public static final int button3=0x7f080007;
         public static final int cancelbutton=0x7f08000c;
         public static final int checkBox1=0x7f080005;
         public static final int comment=0x7f080010;
+        public static final int comment_txt=0x7f080015;
+        public static final int dislike_btn=0x7f080017;
+        public static final int dislike_txt=0x7f080016;
         public static final int editText1=0x7f080002;
         public static final int editText2=0x7f080004;
         public static final int editText3=0x7f08000a;
         public static final int geo=0x7f08000f;
+        public static final int like_btn=0x7f080019;
+        public static final int like_txt=0x7f080018;
+        public static final int linearLayout1=0x7f080012;
         public static final int list=0x7f080011;
         public static final int mainlayout=0x7f080000;
-        public static final int mapview=0x7f080017;
-        public static final int menu_settings=0x7f080018;
+        public static final int mapview=0x7f08001f;
+        public static final int menu_settings=0x7f080020;
         public static final int message=0x7f08000e;
         public static final int submitbutton=0x7f08000b;
-        public static final int tdislike=0x7f080013;
+        public static final int tdislike=0x7f08001b;
         public static final int textView1=0x7f080001;
         public static final int textView2=0x7f080003;
         public static final int textView3=0x7f080009;
         public static final int title=0x7f08000d;
-        public static final int tlike=0x7f080016;
-        public static final int username=0x7f080012;
+        public static final int tlike=0x7f08001e;
+        public static final int userimageView=0x7f080013;
+        public static final int username=0x7f08001a;
+        public static final int username_txt=0x7f080014;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int activity_register=0x7f030001;
         public static final int activity_shop=0x7f030002;
-        public static final int list_item=0x7f030003;
-        public static final int mylayout=0x7f030004;
+        public static final int comment_item=0x7f030003;
+        public static final int list_item=0x7f030004;
+        public static final int mylayout=0x7f030005;
     }
     public static final class menu {
         public static final int activity_main=0x7f070000;
