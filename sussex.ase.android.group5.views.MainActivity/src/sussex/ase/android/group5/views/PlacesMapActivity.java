@@ -86,7 +86,7 @@ public class PlacesMapActivity extends MapActivity {
 	}
 	private void AddLocationTag()
 	{
-		
+	
 		Calendar c=Calendar.getInstance();
 		int mYear=c.get(Calendar.YEAR);
 		int mMonth=c.get(Calendar.MONTH);
@@ -99,6 +99,7 @@ public class PlacesMapActivity extends MapActivity {
 	    mapctrl.setCenter(gp);
 	    refreshMapViewByGeoPoint(gp,mapView, intZoomLevel,false); 
         mapOverlays = mapView.getOverlays();
+        mapOverlays.clear();
    		Address mAddr = getAddressByGeoPoint(PlacesMapActivity.this, gp);
    		String address = "cannot find the address of this location";
    		if(mAddr != null)
@@ -122,6 +123,7 @@ public class PlacesMapActivity extends MapActivity {
 
 	private void AddShopsMark()
 	{
+        
 		if(nearPlaces != null)
 		{
 			// Get json response status
@@ -208,6 +210,7 @@ public class PlacesMapActivity extends MapActivity {
 		{
 			public void onClick(View v)
 			{
+				AddLocationTag();
 				new LoadPlaces().execute();
 			}
 		});
